@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Admin {
+  id       Int    @id @default(autoincrement())
+  username String @unique
+  email    String @unique
+  password String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admin")
+}
+
+model MenuCategory {
+  id    String  @id @default(cuid())
+  name  String
+  slug  String  @unique
+  image String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@map("menu_category")
+}
