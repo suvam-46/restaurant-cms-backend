@@ -11,6 +11,10 @@ model Admin {
   username String @unique
   email    String @unique
   password String
+  primaryPhoneNumber String ?
+  secondaryPhoneNumber String?
+  isActive Boolean @default(true)
+  profileImage String ?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -23,9 +27,67 @@ model MenuCategory {
   name  String
   slug  String  @unique
   image String?
+  order       Int        @default(0)
+  menuItem MenuItem []
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
   @@map("menu_category")
+}
+
+model Site {
+  id String @id @default(uuid())
+  siteLogo String
+  siteName String
+  siteURL String
+  description String ?
+  contactEmail String?
+  contactPhone String?
+  address      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt()
+
+  @@map("site")
+
+}
+
+model Banner {
+  id          String   @id @default(uuid())
+  bannerTitle String?
+  bannerImage String
+  bannerLink  String?
+  buttonText  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt()
+}
+
+model MenuItem{
+  id String @id @default(uuid())
+  item String
+  price Decimal
+  image String
+
+  categoryId String
+  category  MenuCategory @relation(fields: [categoryId], references: [id])
+
+}
+
+model FeatureCategory{
+  id String @id @default(uuid())
+
+}
+
+model Legal{
+  id String @id @default(uuid())
+type  LegalEnum
+content String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt()
+}
+
+
+enum LegalEnum{
+  privacy_policy
+  terms_and_conditions
 }
