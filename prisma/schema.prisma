@@ -8,7 +8,7 @@ datasource db {
 
 model Admin {
   id       Int    @id @default(autoincrement())
-  username String @unique
+  username String
   email    String @unique
   password String
   primaryPhoneNumber String ?
@@ -23,12 +23,14 @@ model Admin {
 }
 
 model MenuCategory {
-  id    String  @id @default(cuid())
-  name  String
-  slug  String  @unique
-  image String?
-  order       Int        @default(0)
-  menuItem MenuItem []
+  id          String  @id @default(cuid())
+  name        String
+  slug        String  @unique
+  description String?
+  image       String?
+  order       Int     @default(0)
+  isActive    Boolean @default(true)
+  menuItem    MenuItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
@@ -40,7 +42,7 @@ model Site {
   id String @id @default(uuid())
   siteLogo String
   siteName String
-  siteURL String
+  siteURL String ?
   description String ?
   contactEmail String?
   contactPhone String?
@@ -69,7 +71,7 @@ model MenuItem{
   image String
 
   categoryId String
-  category  MenuCategory @relation(fields: [categoryId], references: [id])
+  category   MenuCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
 }
 

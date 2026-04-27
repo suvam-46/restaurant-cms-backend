@@ -8,6 +8,6 @@ export const adminRouter: express.Router = express.Router();
 
 adminRouter.post("/login", adminLogin);
 adminRouter.post("/register", adminRegister)
-adminRouter.post("/updateAdmin", adminUpdate)
-adminRouter.post("/deleteAdmin", adminDelete)
+adminRouter.put("/updateAdmin/:id", adminUpdate)
+adminRouter.delete('/deleteAdmin/:id', adminDelete);
 

@@ -51,7 +51,7 @@ export async function getCategoryByIdOrSlug(
         ],
       },
       include: {
-        menuItem: true, // Automatically includes all food items belonging to this category
+        menuItem: true, 
       },
     });
 

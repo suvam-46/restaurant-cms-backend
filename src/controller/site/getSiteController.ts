@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "@/lib/prisma";
 
-/* 1. Get All Sites */
 export const getAllSites = async (req: Request, res: Response) => {
   try {
     const sites = await prisma.site.findMany({

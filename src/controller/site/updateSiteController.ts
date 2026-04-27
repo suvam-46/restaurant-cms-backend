@@ -1,21 +1,8 @@
 import { Request, Response } from "express";
 import prisma from "@/lib/prisma";
 
-/* Update site */
 export const updateSite = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-
-    // 1. TYPE GUARD: This solves the ts(2412) error.
-    // By checking if it's a string, we guarantee to TS that it's not string[] or undefined.
-    if (!id || typeof id !== "string") {
-      return res.status(400).json({
-        success: false,
-        message: "A valid Site ID string is required.",
-      });
-    }
-
-    // 2. Destructure body for cleaner code
     const { 
       siteLogo, 
       siteName, 
@@ -26,29 +13,57 @@ export const updateSite = async (req: Request, res: Response) => {
       address 
     } = req.body;
 
-    const updated = await prisma.site.update({
-      where: { id: id }, // Now TS is certain 'id' is a string
-      data: {
-        siteLogo,
-        siteName,
-        siteURL,
-        description,
-        contactEmail,
-        contactPhone,
-        address,
-      },
-    });
+    // VALIDATION: Ensure required fields are not just empty strings or null
+    if (!siteName || !siteLogo) {
+      return res.status(400).json({
+        success: false,
+        message: "Site Name and Site Logo are required.",
+      });
+    }
+
+    // Check if any site record exists
+    const existingSite = await prisma.site.findFirst();
+
+    let result;
+    if (existingSite) {
+      // Update the existing record
+      result = await prisma.site.update({
+        where: { id: existingSite.id },
+        data: {
+          siteLogo,
+          siteName,
+          siteURL: siteURL || null,
+          description: description || null,
+          contactEmail: contactEmail || null,
+          contactPhone: contactPhone || null,
+          address: address || null,
+        },
+      });
+    } else {
+      // Create the first record
+      result = await prisma.site.create({
+        data: {
+          siteLogo,
+          siteName,
+          siteURL: siteURL || null,
+          description: description || null,
+          contactEmail: contactEmail || null,
+          contactPhone: contactPhone || null,
+          address: address || null,
+        },
+      });
+    }
 
     return res.status(200).json({
       success: true,
-      message: "Site updated successfully",
-      data: updated,
+      message: existingSite ? "Site updated successfully" : "Site created successfully",
+      data: result,
     });
   } catch (error) {
-    console.error("Update error:", error);
+    console.error("Site Save Error:", error);
     return res.status(500).json({
       success: false,
-      message: "Update failed. Make sure the record exists.",
+      message: error instanceof Error ? error.message : "Failed to save site settings.",
     });
   }
-};  
+};
